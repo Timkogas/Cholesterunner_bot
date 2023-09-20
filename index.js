@@ -24,7 +24,7 @@ const start = () => {
           parse_mode: 'HTML',
           reply_markup: {
             inline_keyboard: [
-              [{ text: 'Играть', web_app: { url: 'https://ya.ru' } }],
+              [{ text: 'Играть', web_app: { url: 'https://cholesterunner.ru' } }],
               [{ text: 'О проекте', callback_data: variants.about }, { text: 'Тест', callback_data: variants.test }, { text: 'Помочь фонду', callback_data: variants.help }],
             ],
           }
@@ -45,7 +45,7 @@ const start = () => {
           parse_mode: 'HTML',
           reply_markup: {
             inline_keyboard: [
-              [{ text: 'Играть', web_app: { url: 'https://ya.ru' } }],
+              [{ text: 'Играть', web_app: { url: 'https://cholesterunner.ru' } }],
               [{ text: 'О проекте', callback_data: variants.about }, { text: 'Тест', callback_data: variants.test }, { text: 'Помочь фонду', callback_data: variants.help }],
             ],
           }
