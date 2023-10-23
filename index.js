@@ -12,7 +12,13 @@ const userSchema = new mongoose.Schema({
   phone: String,
 });
 
+const labelSchema = new mongoose.Schema({
+  name: { type: String, required: true, unique: true },
+  count: { type: Number, default: 1 }
+});
+
 const User = mongoose.model('User', userSchema);
+const Label = mongoose.model('Label', labelSchema);
 
 const token = process.env.TOKEN
 const bot = new TelegramApi(token, { polling: true })
@@ -27,6 +33,8 @@ const variants = {
 
 const start = () => {
   bot.on('message', async (msg) => {
+    const textArr = msg.text.split(' ')
+
     const text = msg.text
     const chatId = msg.chat.id
 
@@ -55,7 +63,25 @@ const start = () => {
     }
 
     try {
-      if (text === '/start') {
+      if (text.includes('/start')) {
+
+        if (textArr.length === 2) {
+          const labelName = textArr[1];
+          try {
+            const existingLabel = await Label.findOne({ name: labelName });
+    
+            if (existingLabel) {
+              existingLabel.count += 1;
+              await existingLabel.save();
+            } else {
+              const newLabel = new Label({ name: labelName });
+              await newLabel.save();
+            }
+          } catch (error) {
+            console.error(error);
+          }
+        }
+
         return await bot.sendPhoto(chatId, './pic.jpg', {
           caption: `<b>Бляшки уже заждались! 🔥</b>\n\nЗаходи в меню и жми играть, чтобы начать!\n\n<b>Внимание:</b> игра запускается только с мобильных устройств. `,
           parse_mode: 'HTML',
@@ -77,7 +103,8 @@ const start = () => {
     const { data, message } = callbackQuery
     switch (data) {
       case variants.menu:
-        await bot.sendMessage(message.chat.id, `<b>Бляшки уже заждались! 🔥</b>\n\nЗаходи в меню и жми играть, чтобы начать!\n\n<b>Внимание:</b> игра запускается только с мобильных устройств.`, {
+        await bot.sendPhoto(message.chat.id, './pic.jpg', {
+          caption: `<b>Бляшки уже заждались! 🔥</b>\n\nЗаходи в меню и жми играть, чтобы начать!\n\n<b>Внимание:</b> игра запускается только с мобильных устройств. `,
           parse_mode: 'HTML',
           reply_markup: {
             inline_keyboard: [
